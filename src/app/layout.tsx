@@ -15,7 +15,7 @@ export default function RootLayout({ children }: { children: ReactNode }) {
           richColors
           position="bottom-center"
           closeButton
-          duration={50000}
+          duration={5000}
         />
       </body>
     </html>
