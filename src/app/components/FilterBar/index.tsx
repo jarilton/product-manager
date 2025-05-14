@@ -13,21 +13,21 @@ export const FilterBar = () => {
         placeholder="Buscar por nome"
         value={query}
         onChange={(e) => setQuery(e.target.value)}
-        className="border p-2 rounded"
+        className="border p-2 rounded text-gray-500"
       />
       <input
         type="number"
         placeholder="Preço Mínimo"
         value={min}
         onChange={(e) => setMin(Number(e.target.value))}
-        className="border p-2 rounded"
+        className="border p-2 rounded text-gray-500"
       />
       <input
         type="number"
         placeholder="Preço Máximo"
         value={max}
         onChange={(e) => setMax(Number(e.target.value))}
-        className="border p-2 rounded"
+        className="border p-2 rounded text-gray-500"
       />
       <button
         onClick={() => filterProducts(query, min, max)}

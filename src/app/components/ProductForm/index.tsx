@@ -1,96 +1,123 @@
 "use client";
 
-import { useState } from "react";
+import { useForm } from "react-hook-form";
 import { useProductStore } from "@/store/productStore";
 import { v4 as uuidv4 } from "uuid";
 import { normalizeCurrency } from "@/utils/normalize";
 
+type FormValues = {
+  name: string;
+  category: string;
+  price: string;
+  description: string;
+  imageUrl: string;
+};
+
 export const ProductForm = () => {
   const { addProduct } = useProductStore();
-  const [form, setForm] = useState({
-    name: "",
-    category: "",
-    price: "",
-    description: "",
-    imageUrl: "",
-  });
 
-  const handleChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
-  ) => {
-    const { name, value } = e.target;
+  const {
+    register,
+    handleSubmit,
+    setValue,
+    reset,
+    formState: { errors },
+  } = useForm<FormValues>();
 
-    if (name === "price") {
-      const formatted = normalizeCurrency(value);
-      setForm((prev) => ({ ...prev, [name]: formatted }));
-    } else {
-      setForm((prev) => ({ ...prev, [name]: value }));
-    }
-  };
-
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-
-    const cleanPrice = Number(form.price.replace(/\D/g, "")) / 100;
+  const onSubmit = (data: FormValues) => {
+    const cleanPrice = Number(data.price.replace(/\D/g, "")) / 100;
 
     addProduct({
-      ...form,
+      ...data,
       id: uuidv4(),
       price: cleanPrice,
     });
 
-    setForm({
-      name: "",
-      category: "",
-      price: "",
-      description: "",
-      imageUrl: "",
-    });
+    reset();
+  };
+
+  const handlePriceChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = normalizeCurrency(e.target.value);
+    setValue("price", value);
   };
 
   return (
     <form
-      onSubmit={handleSubmit}
-      className="mb-4 grid grid-cols-1 md:grid-cols-2 gap-2"
+      onSubmit={handleSubmit(onSubmit)}
+      className="grid gap-4 p-4 bg-white rounded-xl shadow-md max-w-6xl w-full mx-auto"
     >
-      <input
-        name="name"
-        value={form.name}
-        onChange={handleChange}
-        placeholder="Nome"
-        className="border p-2 rounded"
-      />
-      <input
-        name="category"
-        value={form.category}
-        onChange={handleChange}
-        placeholder="Categoria"
-        className="border p-2 rounded"
-      />
-      <input
-        name="price"
-        value={form.price}
-        onChange={handleChange}
-        placeholder="Preço"
-        inputMode="numeric"
-        className="border p-2 rounded"
-      />
-      <input
-        name="imageUrl"
-        value={form.imageUrl}
-        onChange={handleChange}
-        placeholder="URL da Imagem"
-        className="border p-2 rounded"
-      />
-      <textarea
-        name="description"
-        value={form.description}
-        onChange={handleChange}
-        placeholder="Descrição"
-        className="border p-2 rounded col-span-2"
-      />
-      <div className="flex flex-col md:flex-row gap-2 col-span-2">
-        <button className="bg-blue-600 text-white p-2 rounded col-span-2 w-50 mt-4">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div>
+          <input
+            {...register("name", { required: "Nome é obrigatório" })}
+            placeholder="Nome"
+            className="w-full border p-2 rounded text-gray-500"
+          />
+          {errors.name && (
+            <p className="text-red-500 text-sm mt-1">{errors.name.message}</p>
+          )}
+        </div>
+
+        <div>
+          <input
+            {...register("category", { required: "Categoria é obrigatória" })}
+            placeholder="Categoria"
+            className="w-full border p-2 rounded text-gray-500"
+          />
+          {errors.category && (
+            <p className="text-red-500 text-sm mt-1">
+              {errors.category.message}
+            </p>
+          )}
+        </div>
+
+        <div>
+          <input
+            {...register("price", { required: "Preço é obrigatório" })}
+            placeholder="Preço"
+            inputMode="numeric"
+            className="w-full border p-2 rounded text-gray-500"
+            onChange={handlePriceChange}
+          />
+          {errors.price && (
+            <p className="text-red-500 text-sm mt-1">{errors.price.message}</p>
+          )}
+        </div>
+
+        <div>
+          <input
+            {...register("imageUrl", {
+              required: "URL da Imagem é obrigatória",
+            })}
+            placeholder="URL da Imagem"
+            className="w-full border p-2 rounded text-gray-500"
+          />
+          {errors.imageUrl && (
+            <p className="text-red-500 text-sm mt-1">
+              {errors.imageUrl.message}
+            </p>
+          )}
+        </div>
+      </div>
+
+      <div>
+        <textarea
+          {...register("description", { required: "Descrição é obrigatória" })}
+          placeholder="Descrição"
+          className="w-full border p-2 rounded text-gray-500 min-h-[100px]"
+        />
+        {errors.description && (
+          <p className="text-red-500 text-sm mt-1">
+            {errors.description.message}
+          </p>
+        )}
+      </div>
+
+      <div className="flex justify-end">
+        <button
+          type="submit"
+          className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded transition"
+        >
           Cadastrar Produto
         </button>
       </div>

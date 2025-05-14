@@ -7,11 +7,11 @@ export const ProductCard = ({ product }: { product: Product }) => (
       alt={product.name}
       className="w-full h-32 object-cover mb-2"
     />
-    <h2 className="font-bold">{product.name}</h2>
-    <p className="text-sm">{product.category}</p>
+    <h2 className="font-bold text-gray-400">{product.name}</h2>
+    <p className="text-sm text-gray-400">{product.category}</p>
     <p className="text-green-600">
       R$ {normalizeCurrency(String(product.price))}
     </p>
-    <p className="text-xs">{product.description}</p>
+    <p className="text-xs text-gray-400">{product.description}</p>
   </div>
 );
