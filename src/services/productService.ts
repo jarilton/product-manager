@@ -1,7 +1,9 @@
-export async function fetchProducts(): Promise<Product[]> {
+export const fetchProducts = async () => {
   const res = await fetch("/api/products");
 
-  console.log("res", res);
+  if (!res.ok) {
+    throw new Error("Erro ao buscar produtos");
+  }
 
-  return await res.json();
-}
+  return res.json();
+};

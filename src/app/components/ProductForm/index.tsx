@@ -4,6 +4,7 @@ import { useForm } from "react-hook-form";
 import { useProductStore } from "@/store/productStore";
 import { v4 as uuidv4 } from "uuid";
 import { normalizeCurrency } from "@/utils/normalize";
+import { toast } from "sonner";
 
 type FormValues = {
   name: string;
@@ -25,15 +26,27 @@ export const ProductForm = () => {
   } = useForm<FormValues>();
 
   const onSubmit = (data: FormValues) => {
-    const cleanPrice = Number(data.price.replace(/\D/g, "")) / 100;
+    try {
+      const cleanPrice = Number(data.price.replace(/\D/g, "")) / 100;
 
-    addProduct({
-      ...data,
-      id: uuidv4(),
-      price: cleanPrice,
-    });
+      addProduct({
+        ...data,
+        id: uuidv4(),
+        price: cleanPrice,
+      });
 
-    reset();
+      toast.success("Produto cadastrado com sucesso!", {
+        description: "O produto foi adicionado à lista.",
+      });
+
+      reset();
+    } catch (error) {
+      console.error("Erro ao cadastrar produto:", error);
+
+      toast.error("Erro ao cadastrar produto", {
+        description: "Ocorreu um erro ao cadastrar o produto.",
+      });
+    }
   };
 
   const handlePriceChange = (e: React.ChangeEvent<HTMLInputElement>) => {

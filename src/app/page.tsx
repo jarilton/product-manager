@@ -13,7 +13,16 @@ export default function Home() {
   const setProducts = useProductStore((s) => s.setProducts);
 
   useEffect(() => {
-    fetchProducts().then(setProducts);
+    const load = async () => {
+      try {
+        const products = await fetchProducts();
+        setProducts(products);
+      } catch (error) {
+        console.error("Erro ao buscar produtos:", error);
+      }
+    };
+
+    load();
   }, [setProducts]);
 
   return (
