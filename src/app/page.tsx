@@ -17,11 +17,13 @@ export default function Home() {
   }, [setProducts]);
 
   return (
-    <main className="p-4 max-w-6xl mx-auto">
-      <h1 className="text-2xl font-bold mb-4">Gerenciador de Produtos</h1>
-      <ProductForm />
-      <FilterBar />
-      <ProductList />
+    <main className="p-4  mx-auto h-[100vh] bg-gray-100">
+      <div className="flex flex-col gap-4 p-6">
+        <h1 className="text-2xl font-bold mb-4">Gerenciador de Produtos</h1>
+        <ProductForm />
+        <FilterBar />
+        <ProductList />
+      </div>
     </main>
   );
 }

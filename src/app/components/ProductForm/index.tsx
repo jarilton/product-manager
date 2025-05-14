@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { useProductStore } from "@/store/productStore";
 import { v4 as uuidv4 } from "uuid";
+import { normalizeCurrency } from "@/utils/normalize";
 
 export const ProductForm = () => {
   const { addProduct } = useProductStore();
@@ -17,12 +18,30 @@ export const ProductForm = () => {
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => {
-    setForm({ ...form, [e.target.name]: e.target.value });
+    const { name, value } = e.target;
+
+    if (name === "price") {
+      const formatted = normalizeCurrency(value);
+      setForm((prev) => ({ ...prev, [name]: formatted }));
+    } else {
+      setForm((prev) => ({ ...prev, [name]: value }));
+    }
   };
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    addProduct({ ...form, id: uuidv4(), price: parseFloat(form.price) });
+
+    // Transforma o valor formatado de volta para número (ex: "1.234,56" -> 1234.56)
+    const numericPrice = parseFloat(
+      form.price.replace(/\./g, "").replace(",", ".")
+    );
+
+    addProduct({
+      ...form,
+      id: uuidv4(),
+      price: numericPrice,
+    });
+
     setForm({
       name: "",
       category: "",
@@ -56,7 +75,7 @@ export const ProductForm = () => {
         value={form.price}
         onChange={handleChange}
         placeholder="Preço"
-        type="number"
+        inputMode="numeric"
         className="border p-2 rounded"
       />
       <input
@@ -73,9 +92,11 @@ export const ProductForm = () => {
         placeholder="Descrição"
         className="border p-2 rounded col-span-2"
       />
-      <button className="bg-blue-600 text-white p-2 rounded col-span-2">
-        Cadastrar Produto
-      </button>
+      <div className="flex flex-col md:flex-row gap-2 col-span-2">
+        <button className="bg-blue-600 text-white p-2 rounded col-span-2 w-50 mt-4">
+          Cadastrar Produto
+        </button>
+      </div>
     </form>
   );
 };
