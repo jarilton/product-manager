@@ -31,15 +31,12 @@ export const ProductForm = () => {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
 
-    // Transforma o valor formatado de volta para número (ex: "1.234,56" -> 1234.56)
-    const numericPrice = parseFloat(
-      form.price.replace(/\./g, "").replace(",", ".")
-    );
+    const cleanPrice = Number(form.price.replace(/\D/g, "")) / 100;
 
     addProduct({
       ...form,
       id: uuidv4(),
-      price: numericPrice,
+      price: cleanPrice,
     });
 
     setForm({
